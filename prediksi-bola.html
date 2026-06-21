@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediksi Bola — Bolapelangi Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #07090f;
+  --bg2:     #0d1020;
+  --panel:   rgba(255,255,255,0.03);
+  --panel2:  rgba(255,255,255,0.06);
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --green:   #00e676;
+  --green2:  #69f0ae;
+  --cyan:    #00e5ff;
+  --gold:    #ffd740;
+  --red:     #ff5252;
+  --purple:  #e040fb;
+  --t1: #f0f4ff;
+  --t2: rgba(240,244,255,0.65);
+  --t3: rgba(240,244,255,0.38);
+  --t4: rgba(240,244,255,0.18);
+  --r: 12px;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: 'Exo 2', sans-serif;
+  min-height: 100vh;
+}
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(0,230,118,0.25); border-radius:3px; }
+
+/* ── HEADER ── */
+.site-header {
+  background: linear-gradient(135deg, #0a1a0a 0%, #0d1020 50%, #0a0a1a 100%);
+  border-bottom: 1px solid rgba(0,230,118,0.2);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+}
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+}
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, #00e676, #00bcd4);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 0 20px rgba(0,230,118,0.4);
+}
+.logo-text {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.05em;
+  color: var(--t1);
+}
+.logo-text span { color: var(--green); }
+.header-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--t3);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.live-dot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--green);
+  text-transform: uppercase;
+}
+.live-dot::before {
+  content: '';
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(0,230,118,0.2);
+  animation: livepulse 2s ease-in-out infinite;
+}
+@keyframes livepulse {
+  0%,100% { box-shadow: 0 0 0 3px rgba(0,230,118,0.2); }
+  50%      { box-shadow: 0 0 0 7px rgba(0,230,118,0); }
+}
+.date-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--t3);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  letter-spacing: 0.1em;
+}
+
+/* ── TABS ── */
+.tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1rem 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  background: var(--bg2);
+}
+.tabs-bar::-webkit-scrollbar { display:none; }
+.tab-btn {
+  padding: 9px 18px;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  color: var(--t3);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--t2); background: var(--panel); }
+.tab-btn.active {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--green);
+  position: relative;
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0; height: 2px;
+  background: var(--green);
+}
+
+/* ── MAIN CONTENT ── */
+.main {
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── STATS STRIP ── */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+.stat-card:hover { transform: translateY(-3px); }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent);
+}
+.stat-icon { font-size: 1.6rem; }
+.stat-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 0.65rem;
+  color: var(--t3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.stat-card.g { --accent: var(--green); }
+.stat-card.c { --accent: var(--cyan); }
+.stat-card.y { --accent: var(--gold); }
+.stat-card.p { --accent: var(--purple); }
+
+/* ── SEARCH & FILTER ── */
+.search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.search-wrap {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+.search-wrap input {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px 10px 36px;
+  color: var(--t1);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-wrap input::placeholder { color: var(--t4); }
+.search-wrap input:focus { border-color: rgba(0,230,118,0.4); }
+.search-ico {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--t4);
+  font-size: 0.9rem;
+}
+.filter-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--t3);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.filter-btn:hover,
+.filter-btn.active { background: rgba(0,230,118,0.08); border-color: rgba(0,230,118,0.35); color: var(--green); }
+
+/* ── LEAGUE SECTION ── */
+.league-section {
+  margin-bottom: 1.25rem;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: var(--panel);
+}
+.league-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+.league-header:hover { background: rgba(0,230,118,0.04); }
+.league-flag {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.league-logo {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--panel2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.league-info { flex: 1; }
+.league-name {
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.05em;
+  color: var(--t1);
+  text-transform: uppercase;
+}
+.league-country {
+  font-size: 0.62rem;
+  color: var(--t3);
+  letter-spacing: 0.12em;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+.league-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--green);
+  background: rgba(0,230,118,0.1);
+  border: 1px solid rgba(0,230,118,0.2);
+  border-radius: 20px;
+  padding: 3px 9px;
+  letter-spacing: 0.08em;
+}
+.league-toggle {
+  color: var(--t3);
+  font-size: 0.8rem;
+  transition: transform 0.3s;
+}
+.league-section.collapsed .league-toggle { transform: rotate(-90deg); }
+
+/* ── MATCH ROWS ── */
+.matches-body {
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.league-section.collapsed .matches-body {
+  max-height: 0 !important;
+}
+.match-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 64px 1fr 80px;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.match-row:last-child { border-bottom: none; }
+.match-row:hover { background: var(--panel2); }
+
+/* time */
+.match-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.match-time small {
+  display: block;
+  font-size: 0.58rem;
+  color: var(--t4);
+  letter-spacing: 0.08em;
+  margin-top: 1px;
+}
+
+/* team */
+.team {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.team-flag {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.team-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.team.away { flex-direction: row-reverse; text-align: right; }
+.team.away .team-name { text-align: right; }
+
+/* score / vs */
+.match-score {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.score-prediksi {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+.score-odds {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--t4);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.vs-badge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--t4);
+  text-transform: uppercase;
+}
+
+/* recommendation */
+.match-rec {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.rec-chip {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.rec-chip.home { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+.rec-chip.away { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid rgba(0,229,255,0.2); }
+.rec-chip.draw { background: rgba(255,215,64,0.1); color: var(--gold); border: 1px solid rgba(255,215,64,0.2); }
+.rec-odds {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--t4);
+}
+
+/* ── EMPTY ── */
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+  color: var(--t4);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 1.5rem;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: var(--t3);
+  letter-spacing: 0.08em;
+}
+.legend-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  font-size: 0.68rem;
+  color: var(--t4);
+  letter-spacing: 0.15em;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+.site-footer a { color: var(--green); text-decoration: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  .stats-strip { grid-template-columns: 1fr 1fr; }
+  .match-row {
+    grid-template-columns: 48px 1fr 56px 1fr 60px;
+    gap: 4px;
+    padding: 8px 10px;
+  }
+  .team-flag { font-size: 0.95rem; }
+  .team-name { font-size: 0.72rem; }
+  .score-prediksi { font-size: 0.78rem; }
+  .main { padding: 1rem; }
+}
+@media (max-width: 420px) {
+  .match-rec { display: none; }
+  .match-row { grid-template-columns: 44px 1fr 52px 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo-wrap">
+    <div class="logo-icon">⚽</div>
+    <div>
+      <div class="logo-text">BOLA<span>PELANGI</span></div>
+      <div class="header-badge">Jadwal &amp; Prediksi · 21–22 Juni 2026</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-dot">Live Update</div>
+    <div class="date-chip" id="currentDate">---</div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('prediksi', this)">🎯 Prediksi Skor</button>
+  <button class="tab-btn" onclick="switchTab('jadwal', this)">📅 Jadwal & Odds</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stat-card g">
+      <div class="stat-icon">🌍</div>
+      <div>
+        <div class="stat-val" id="st-liga">—</div>
+        <div class="stat-lbl">Total Liga</div>
+      </div>
+    </div>
+    <div class="stat-card c">
+      <div class="stat-icon">⚽</div>
+      <div>
+        <div class="stat-val" id="st-match">—</div>
+        <div class="stat-lbl">Total Match</div>
+      </div>
+    </div>
+    <div class="stat-card y">
+      <div class="stat-icon">🏆</div>
+      <div>
+        <div class="stat-val" id="st-today">—</div>
+        <div class="stat-lbl">Match Hari Ini</div>
+      </div>
+    </div>
+    <div class="stat-card p">
+      <div class="stat-icon">🌐</div>
+      <div>
+        <div class="stat-val" id="st-wc">4</div>
+        <div class="stat-lbl">World Cup 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Rekomendasi Home</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Rekomendasi Away</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Prediksi Draw</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Jam = WIB</div>
+    <div class="legend-item" style="margin-left:auto;color:var(--t4)">Sumber: shortq.info/prediksibola</div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-row">
+    <div class="search-wrap">
+      <span class="search-ico">🔍</span>
+      <input type="text" id="searchInput" placeholder="Cari tim atau liga..." oninput="renderAll()">
+    </div>
+    <button class="filter-btn active" id="f-all"     onclick="setFilter('all',this)">Semua</button>
+    <button class="filter-btn"        id="f-wc"      onclick="setFilter('wc',this)">🌍 World Cup</button>
+    <button class="filter-btn"        id="f-europe"  onclick="setFilter('europe',this)">🇪🇺 Eropa</button>
+    <button class="filter-btn"        id="f-latam"   onclick="setFilter('latam',this)">🌎 Amerika</button>
+    <button class="filter-btn"        id="f-asia"    onclick="setFilter('asia',this)">🌏 Asia/Oseania</button>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div id="contentArea"></div>
+
+</div>
+
+<footer class="site-footer">
+  Data dari <a href="https://shortq.info/prediksibola" target="_blank">shortq.info/prediksibola</a> · Bolapelangi · Update: 21–22 Juni 2026 ·
+  Prediksi ini bersifat hiburan, bukan jaminan kemenangan.
+</footer>
+
+<script>
+// ────────────────────────────────────────────────────────────
+// DATA LENGKAP: liga + bendera + matches (jadwal & prediksi)
+// ────────────────────────────────────────────────────────────
+const LEAGUES = [
+  {
+    id: 'wc',
+    name: 'World Cup 2026',
+    country: 'Canada · Mexico · USA',
+    flag: '🌍',
+    logo: '🏆',
+    region: 'wc',
+    matches: [
+      { date:'21/06', time:'23:00', home:'Spain',        homeFlag:'🇪🇸', away:'Saudi Arabia', awayFlag:'🇸🇦', prediksi:'2:1', odds:'0 : 2 1/2', rec:'home' },
+      { date:'22/06', time:'02:00', home:'Belgium',      homeFlag:'🇧🇪', away:'Iran',         awayFlag:'🇮🇷', prediksi:'1:0', odds:'0 : 1 1/4', rec:'home' },
+      { date:'22/06', time:'05:00', home:'Uruguay',      homeFlag:'🇺🇾', away:'Cape Verde',   awayFlag:'🇨🇻', prediksi:'2:0', odds:'0 : 1',    rec:'home' },
+      { date:'22/06', time:'08:00', home:'Egypt',        homeFlag:'🇪🇬', away:'New Zealand',  awayFlag:'🇳🇿', prediksi:'0:2', odds:'0 : 3/4',  rec:'away' },
+    ]
+  },
+  {
+    id: 'sweden-superettan',
+    name: 'Sweden Superettan',
+    country: 'Swedia',
+    flag: '🇸🇪',
+    logo: '🇸🇪',
+    region: 'europe',
+    matches: [
+      { date:'21/06', time:'20:00', home:'Helsingborgs',   homeFlag:'🇸🇪', away:'GIF Sundsvall',  awayFlag:'🇸🇪', prediksi:'0:1', odds:'0 : 1/2', rec:'away' },
+      { date:'21/06', time:'20:00', home:'Osters',         homeFlag:'🇸🇪', away:'Falkenbergs',    awayFlag:'🇸🇪', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'21/06', time:'20:00', home:'IK Brage',       homeFlag:'🇸🇪', away:'IFK Varnamo',    awayFlag:'🇸🇪', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'21/06', time:'22:00', home:'Ostersunds FK',  homeFlag:'🇸🇪', away:'IFK Norrkoping', awayFlag:'🇸🇪', prediksi:'0:0', odds:'0 : 0',   rec:'draw' },
+      { date:'21/06', time:'22:00', home:'Norrby IF',      homeFlag:'🇸🇪', away:'Nordic United',  awayFlag:'🇸🇪', prediksi:'1:0', odds:'1/4 : 0', rec:'home' },
+    ]
+  },
+  {
+    id: 'norway-1st',
+    name: 'Norway 1st Division',
+    country: 'Norwegia',
+    flag: '🇳🇴',
+    logo: '🇳🇴',
+    region: 'europe',
+    matches: [
+      { date:'21/06', time:'21:00', home:'Egersund',     homeFlag:'🇳🇴', away:'Haugesund',     awayFlag:'🇳🇴', prediksi:'2:1', odds:'1/2 : 0',   rec:'home' },
+      { date:'21/06', time:'21:00', home:'Odd BK',       homeFlag:'🇳🇴', away:'Hodd',          awayFlag:'🇳🇴', prediksi:'0:1', odds:'0 : 1 1/4', rec:'away' },
+      { date:'21/06', time:'21:00', home:'Strommen IF',  homeFlag:'🇳🇴', away:'Stabaek',       awayFlag:'🇳🇴', prediksi:'3:0', odds:'3/4 : 0',   rec:'home' },
+      { date:'21/06', time:'21:00', home:'Kongsvinger',  homeFlag:'🇳🇴', away:'Stromsgodset',  awayFlag:'🇳🇴', prediksi:'0:0', odds:'0 : 0',     rec:'draw' },
+      { date:'21/06', time:'21:00', home:'Raufoss IL',   homeFlag:'🇳🇴', away:'Sogndal',       awayFlag:'🇳🇴', prediksi:'1:0', odds:'1/4 : 0',   rec:'home' },
+      { date:'21/06', time:'21:00', home:'Bryne',        homeFlag:'🇳🇴', away:'Asane Fotball', awayFlag:'🇳🇴', prediksi:'0:1', odds:'0 : 1 1/4', rec:'away' },
+      { date:'21/06', time:'21:00', home:'Moss',         homeFlag:'🇳🇴', away:'Sandnes Ulf',   awayFlag:'🇳🇴', prediksi:'0:1', odds:'0 : 1/2',   rec:'away' },
+    ]
+  },
+  {
+    id: 'iceland-premier',
+    name: 'Iceland Premier League',
+    country: 'Islandia',
+    flag: '🇮🇸',
+    logo: '🇮🇸',
+    region: 'europe',
+    matches: [
+      { date:'22/06', time:'01:00', home:'Breidablik',           homeFlag:'🇮🇸', away:'KA Akureyri',        awayFlag:'🇮🇸', prediksi:'0:1', odds:'0 : 1',   rec:'away' },
+      { date:'22/06', time:'01:00', home:'Valur Reykjavik',      homeFlag:'🇮🇸', away:'Keflavik',           awayFlag:'🇮🇸', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'01:00', home:'IBV Vestmannaeyjar',   homeFlag:'🇮🇸', away:'Stjarnan Gardabaer', awayFlag:'🇮🇸', prediksi:'0:0', odds:'0 : 0',   rec:'draw' },
+      { date:'22/06', time:'01:00', home:'FH Hafnarfjordur',     homeFlag:'🇮🇸', away:'Thor Akureyri',      awayFlag:'🇮🇸', prediksi:'0:3', odds:'0 : 3/4', rec:'away' },
+      { date:'22/06', time:'03:15', home:'Fram Reykjavik',       homeFlag:'🇮🇸', away:'Vikingur Reykjavik', awayFlag:'🇮🇸', prediksi:'3:0', odds:'3/4 : 0', rec:'home' },
+    ]
+  },
+  {
+    id: 'iceland-1st',
+    name: 'Iceland 1st Division',
+    country: 'Islandia',
+    flag: '🇮🇸',
+    logo: '🇮🇸',
+    region: 'europe',
+    matches: [
+      { date:'21/06', time:'21:00', home:'Vestri',              homeFlag:'🇮🇸', away:'Afturelding',        awayFlag:'🇮🇸', prediksi:'1:2', odds:'1/2 : 0',   rec:'away' },
+      { date:'21/06', time:'23:00', home:'IR Reykjavik',        homeFlag:'🇮🇸', away:'Volsungur Husavik',  awayFlag:'🇮🇸', prediksi:'0:1', odds:'0 : 1 1/2', rec:'away' },
+      { date:'22/06', time:'02:15', home:'Aegir Thorlakshofn',  homeFlag:'🇮🇸', away:'Throttur Reykjavik', awayFlag:'🇮🇸', prediksi:'1:0', odds:'1 1/4 : 0', rec:'home' },
+      { date:'22/06', time:'02:15', home:'Grotta Seltjarnarnes',homeFlag:'🇮🇸', away:'Fylkir',             awayFlag:'🇮🇸', prediksi:'2:0', odds:'1 : 0',     rec:'home' },
+      { date:'22/06', time:'02:15', home:'HK Kopavogur',        homeFlag:'🇮🇸', away:'Grindavik',          awayFlag:'🇮🇸', prediksi:'0:1', odds:'0 : 1',     rec:'away' },
+    ]
+  },
+  {
+    id: 'belarus',
+    name: 'Belarus Premier League',
+    country: 'Belarus',
+    flag: '🇧🇾',
+    logo: '🇧🇾',
+    region: 'europe',
+    matches: [
+      { date:'21/06', time:'20:00', home:'FC Minsk',        homeFlag:'🇧🇾', away:'FC Maxline Vitebsk',      awayFlag:'🇧🇾', prediksi:'3:0', odds:'1 : 0',   rec:'home' },
+      { date:'21/06', time:'22:00', home:'BATE Borisov',    homeFlag:'🇧🇾', away:'FC Arsenal Dzyarzhynsk', awayFlag:'🇧🇾', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'00:00', home:'Neman Grodno',    homeFlag:'🇧🇾', away:'Dinamo Minsk',            awayFlag:'🇧🇾', prediksi:'2:0', odds:'1/4 : 0', rec:'home' },
+    ]
+  },
+  {
+    id: 'lithuania',
+    name: 'Lithuania A League',
+    country: 'Lithuania',
+    flag: '🇱🇹',
+    logo: '🇱🇹',
+    region: 'europe',
+    matches: [
+      { date:'21/06', time:'18:15', home:'Dziugas Telsiai', homeFlag:'🇱🇹', away:'Suduva Marijampole', awayFlag:'🇱🇹', prediksi:'1:0', odds:'1/4 : 0', rec:'home' },
+    ]
+  },
+  {
+    id: 'estonia',
+    name: 'Estonia Premium Liga',
+    country: 'Estonia',
+    flag: '🇪🇪',
+    logo: '🇪🇪',
+    region: 'europe',
+    matches: [
+      { date:'21/06', time:'21:00', home:'Flora Tallinn', homeFlag:'🇪🇪', away:'Paide Linnameeskond', awayFlag:'🇪🇪', prediksi:'0:2', odds:'0 : 1/2', rec:'away' },
+    ]
+  },
+  {
+    id: 'brazil-b',
+    name: 'Brazil Série B',
+    country: 'Brasil',
+    flag: '🇧🇷',
+    logo: '🇧🇷',
+    region: 'latam',
+    matches: [
+      { date:'21/06', time:'21:00', home:'Avai SC',         homeFlag:'🇧🇷', away:'Cuiaba MT',              awayFlag:'🇧🇷', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'02:00', home:'CRB Maceio',      homeFlag:'🇧🇷', away:'Fortaleza CE',            awayFlag:'🇧🇷', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'03:00', home:'Sao Bernardo SP', homeFlag:'🇧🇷', away:'Juventude RS',            awayFlag:'🇧🇷', prediksi:'0:0', odds:'0 : 0',   rec:'draw' },
+      { date:'22/06', time:'04:30', home:'Goias GO',        homeFlag:'🇧🇷', away:'Operario Ferroviario EC', awayFlag:'🇧🇷', prediksi:'0:1', odds:'0 : 1/2', rec:'away' },
+    ]
+  },
+  {
+    id: 'brazil-c',
+    name: 'Brazil Série C',
+    country: 'Brasil',
+    flag: '🇧🇷',
+    logo: '🇧🇷',
+    region: 'latam',
+    matches: [
+      { date:'21/06', time:'21:00', home:'S.E.R Caxias',    homeFlag:'🇧🇷', away:'Maringa FC',       awayFlag:'🇧🇷', prediksi:'0:2', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'02:00', home:'Brusque SC',       homeFlag:'🇧🇷', away:'Floresta CE',      awayFlag:'🇧🇷', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'04:30', home:'Ferroviaria SP',   homeFlag:'🇧🇷', away:'Inter Limeira SP', awayFlag:'🇧🇷', prediksi:'0:1', odds:'0 : 1/2', rec:'away' },
+      { date:'22/06', time:'04:30', home:'Barra SC',         homeFlag:'🇧🇷', away:'Amazonas AM',      awayFlag:'🇧🇷', prediksi:'2:1', odds:'0 : 1/2', rec:'home' },
+    ]
+  },
+  {
+    id: 'argentina',
+    name: 'Argentina Primera Nacional',
+    country: 'Argentina',
+    flag: '🇦🇷',
+    logo: '🇦🇷',
+    region: 'latam',
+    matches: [
+      { date:'22/06', time:'01:00', home:'Deportivo Madryn',         homeFlag:'🇦🇷', away:'CA Los Andes',              awayFlag:'🇦🇷', prediksi:'2:1', odds:'0 : 1/4', rec:'home' },
+      { date:'22/06', time:'01:30', home:'Defensores de Belgrano',   homeFlag:'🇦🇷', away:'CA All Boys',               awayFlag:'🇦🇷', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'01:30', home:'Ferro Carril Oeste',       homeFlag:'🇦🇷', away:'Deportivo Moron',           awayFlag:'🇦🇷', prediksi:'1:0', odds:'0 : 1/4', rec:'home' },
+      { date:'22/06', time:'01:30', home:'Chacarita Juniors',        homeFlag:'🇦🇷', away:'Deportivo Tristan Suarez',  awayFlag:'🇦🇷', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'01:30', home:'Patronato',                homeFlag:'🇦🇷', away:'CA Ferrocarril Midland',    awayFlag:'🇦🇷', prediksi:'2:1', odds:'0 : 1/4', rec:'home' },
+      { date:'22/06', time:'01:30', home:'Almirante Brown',          homeFlag:'🇦🇷', away:'Club Atletico Mitre',       awayFlag:'🇦🇷', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'02:30', home:'Deportivo Maipu',          homeFlag:'🇦🇷', away:'Gimnasia Y Tiro',           awayFlag:'🇦🇷', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'02:30', home:'Central Norte de Salta',   homeFlag:'🇦🇷', away:'Godoy Cruz Antonio Tomba',  awayFlag:'🇦🇷', prediksi:'2:0', odds:'1/4 : 0', rec:'home' },
+      { date:'22/06', time:'03:00', home:'CA Guemes',                homeFlag:'🇦🇷', away:'Gimnasia Jujuy',            awayFlag:'🇦🇷', prediksi:'2:0', odds:'1/4 : 0', rec:'home' },
+    ]
+  },
+  {
+    id: 'uruguay-2nd',
+    name: 'Uruguay Segunda División',
+    country: 'Uruguay',
+    flag: '🇺🇾',
+    logo: '🇺🇾',
+    region: 'latam',
+    matches: [
+      { date:'21/06', time:'22:30', home:'La Luz FC',  homeFlag:'🇺🇾', away:'Cerrito',              awayFlag:'🇺🇾', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+      { date:'22/06', time:'01:30', home:'Rentistas',  homeFlag:'🇺🇾', away:'Uruguay Montevideo FC', awayFlag:'🇺🇾', prediksi:'0:2', odds:'0 : 1/2', rec:'away' },
+    ]
+  },
+  {
+    id: 'aus-vic',
+    name: 'Australia Victoria NPL',
+    country: 'Australia',
+    flag: '🇦🇺',
+    logo: '🇦🇺',
+    region: 'asia',
+    matches: [
+      { date:'21/06', time:'14:00', home:'St Albans Dinamo', homeFlag:'🇦🇺', away:'Altona Magic', awayFlag:'🇦🇺', prediksi:'0:1', odds:'0 : 1/4', rec:'away' },
+    ]
+  },
+  {
+    id: 'aus-nsw',
+    name: 'Australia NSW Premier League',
+    country: 'Australia',
+    flag: '🇦🇺',
+    logo: '🇦🇺',
+    region: 'asia',
+    matches: [
+      { date:'21/06', time:'11:30', home:'Sydney United 58', homeFlag:'🇦🇺', away:'SD Raiders FC',        awayFlag:'🇦🇺', prediksi:'0:1', odds:'0 : 1 1/4', rec:'away' },
+      { date:'21/06', time:'12:00', home:'Blacktown City',   homeFlag:'🇦🇺', away:'APIA Leichhardt FC',   awayFlag:'🇦🇺', prediksi:'3:0', odds:'3/4 : 0',   rec:'home' },
+      { date:'21/06', time:'12:00', home:'Marconi Stallions',homeFlag:'🇦🇺', away:'UNSW FC',              awayFlag:'🇦🇺', prediksi:'1:1', odds:'0 : 1 1/4', rec:'draw' },
+      { date:'21/06', time:'12:00', home:'Wollongong Wolves',homeFlag:'🇦🇺', away:'Sydney FC Youth',      awayFlag:'🇦🇺', prediksi:'0:1', odds:'0 : 1/4',   rec:'away' },
+    ]
+  },
+  {
+    id: 'aus-qld',
+    name: 'Australia Queensland NPL',
+    country: 'Australia',
+    flag: '🇦🇺',
+    logo: '🇦🇺',
+    region: 'asia',
+    matches: [
+      { date:'21/06', time:'13:00', home:'Brisbane Olympic FC', homeFlag:'🇦🇺', away:'Peninsula Power',   awayFlag:'🇦🇺', prediksi:'1:0', odds:'1 : 0',   rec:'home' },
+      { date:'21/06', time:'14:00', home:'Lions FC',            homeFlag:'🇦🇺', away:'Rochedale Rovers',  awayFlag:'🇦🇺', prediksi:'0:2', odds:'0 : 2 1/4', rec:'away' },
+    ]
+  },
+];
+
+// ────────────────────────────────────────────────────────────
+// STATE
+// ────────────────────────────────────────────────────────────
+let activeTab    = 'prediksi';
+let activeFilter = 'all';
+let collapsed    = {};
+
+// ────────────────────────────────────────────────────────────
+// CLOCK
+// ────────────────────────────────────────────────────────────
+function updateClock() {
+  const n = new Date();
+  const days   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const pad    = x => String(x).padStart(2,'0');
+  document.getElementById('currentDate').textContent =
+    `${days[n.getDay()]} ${pad(n.getDate())} ${months[n.getMonth()]} ${n.getFullYear()} · ${pad(n.getHours())}:${pad(n.getMinutes())}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ────────────────────────────────────────────────────────────
+// TAB SWITCH
+// ────────────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+// ────────────────────────────────────────────────────────────
+// FILTER
+// ────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+// ────────────────────────────────────────────────────────────
+// TOGGLE LEAGUE
+// ────────────────────────────────────────────────────────────
+function toggleLeague(id) {
+  collapsed[id] = !collapsed[id];
+  const sec = document.getElementById('league-' + id);
+  if (sec) {
+    sec.classList.toggle('collapsed', collapsed[id]);
+    const body = sec.querySelector('.matches-body');
+    if (body) body.style.maxHeight = collapsed[id] ? '0' : body.scrollHeight + 'px';
+  }
+}
+
+// ────────────────────────────────────────────────────────────
+// RENDER
+// ────────────────────────────────────────────────────────────
+function getRec(rec) {
+  if (rec === 'home') return `<span class="rec-chip home">Home Win</span>`;
+  if (rec === 'away') return `<span class="rec-chip away">Away Win</span>`;
+  return `<span class="rec-chip draw">Draw</span>`;
+}
+
+function renderAll() {
+  const q   = (document.getElementById('searchInput').value || '').toLowerCase();
+  const area = document.getElementById('contentArea');
+
+  const filtered = LEAGUES.filter(lg => {
+    if (activeFilter !== 'all' && lg.region !== activeFilter) return false;
+    return true;
+  }).map(lg => {
+    const matches = lg.matches.filter(m => {
+      if (!q) return true;
+      return m.home.toLowerCase().includes(q)
+          || m.away.toLowerCase().includes(q)
+          || lg.name.toLowerCase().includes(q)
+          || lg.country.toLowerCase().includes(q);
+    });
+    return { ...lg, matches };
+  }).filter(lg => lg.matches.length > 0);
+
+  // Stats
+  const totalMatches = filtered.reduce((s, l) => s + l.matches.length, 0);
+  document.getElementById('st-liga').textContent  = filtered.length;
+  document.getElementById('st-match').textContent = totalMatches;
+  const today = new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'2-digit'}).replace(/\//g,'/');
+  const todayCount = filtered.reduce((s,l) => s + l.matches.filter(m => m.date === '21/06').length, 0);
+  document.getElementById('st-today').textContent = todayCount;
+
+  if (!filtered.length) {
+    area.innerHTML = `<div class="empty-state">⚽ Tidak ada hasil untuk pencarian "<strong>${q}</strong>"</div>`;
+    return;
+  }
+
+  area.innerHTML = filtered.map(lg => {
+    const id      = lg.id;
+    const isCol   = collapsed[id] || false;
+    const bodyH   = isCol ? '0' : 'auto';
+
+    const matchRows = lg.matches.map(m => {
+      const isJadwal = activeTab === 'jadwal';
+      const scoreVal = isJadwal
+        ? `<span class="score-prediksi" style="color:var(--cyan);font-size:0.75rem">${m.odds}</span>`
+        : `<span class="score-prediksi">${m.prediksi}</span>`;
+
+      return `
+      <div class="match-row">
+        <div class="match-time">
+          ${m.time} WIB
+          <small>${m.date}</small>
+        </div>
+        <div class="team home">
+          <span class="team-flag">${m.homeFlag}</span>
+          <span class="team-name">${m.home}</span>
+        </div>
+        <div class="match-score">
+          ${scoreVal}
+          <span class="vs-badge">${isJadwal ? 'ODDS' : 'VS'}</span>
+          <span class="score-odds" style="font-size:0.52rem;color:var(--t4)">${isJadwal ? 'HANDICAP' : m.odds}</span>
+        </div>
+        <div class="team away">
+          <span class="team-flag">${m.awayFlag}</span>
+          <span class="team-name">${m.away}</span>
+        </div>
+        <div class="match-rec">
+          ${isJadwal ? `<span class="rec-odds" style="font-size:0.62rem;color:var(--t3)">Prediksi:</span><span class="score-prediksi" style="font-size:0.72rem;color:var(--gold)">${m.prediksi}</span>` : getRec(m.rec)}
+        </div>
+      </div>`;
+    }).join('');
+
+    return `
+    <div class="league-section${isCol ? ' collapsed' : ''}" id="league-${id}">
+      <div class="league-header" onclick="toggleLeague('${id}')">
+        <span class="league-flag">${lg.flag}</span>
+        <div class="league-info">
+          <div class="league-name">${lg.name}</div>
+          <div class="league-country">${lg.country}</div>
+        </div>
+        <span class="league-count">${lg.matches.length} Match</span>
+        <span class="league-toggle">▾</span>
+      </div>
+      <div class="matches-body" style="max-height:${isCol ? '0' : '9999px'}">
+        ${matchRows}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>
